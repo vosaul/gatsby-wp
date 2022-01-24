@@ -1,6 +1,7 @@
 import React from "react"
 import { Link, useStaticQuery, graphql } from "gatsby"
 import parse from "html-react-parser"
+import Header from "../components/header"
 
 const Layout = ({ isHomePage, children }) => {
   const {
@@ -21,6 +22,8 @@ const Layout = ({ isHomePage, children }) => {
   return (
     <div className="global-wrapper" data-is-root-path={isHomePage}>
       <header className="global-header">
+      <Header />
+
         {isHomePage ? (
           <h1 className="main-heading">
             <Link to="/">{parse(title)}</Link>
@@ -30,7 +33,7 @@ const Layout = ({ isHomePage, children }) => {
             {title}
           </Link>
         )}
-      </header>
+       </header>
 
       <main>{children}</main>
 

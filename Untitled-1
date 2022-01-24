@@ -1,0 +1,13 @@
+sudo /etc/init.d/mysql stop
+sudo /etc/init.d/mysql start
+sudo mysqld_safe --skip-grant-tables&
+
+ALTER USER 'mysql'@'localhost' IDENTIFIED WITH mysql_native_password BY '098628';
+select PASSWORD('CLEARTEXT_PASSWORD');
+service mysqld stop; mysqld_safe --skip-grant-tables &
+sudo killall -u mysql
+mysql -u root -p
+
+GRANT ALL PRIVILEGES ON *.* TO 'mysql'@'localhost' IDENTIFIED BY '098628';
+
+CREATE DATABASE db_local;

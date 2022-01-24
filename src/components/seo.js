@@ -20,7 +20,6 @@ const Seo = ({ description, lang, meta, title }) => {
             description
           }
         }
-
         # if there's more than one user this would need to be filtered to the main user
         wpUser {
           twitter: name
