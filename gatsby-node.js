@@ -42,14 +42,15 @@ const createIndividualBlogPostPages = async ({ posts, gatsbyUtilities }) =>
 
 const createRootPages = async ({ pages, gatsbyUtilities }) =>
   Promise.all(
-    pages.map(({ page }) =>
+    pages.map(({ page }) => {
+      console.log(page.title)
       gatsbyUtilities.actions.createPage({
         path: page.uri,
         component: path.resolve(`./src/templates/page.js`),
         context: {
           id: page.id,
         },
-      })
+      })}
     )
   )
 

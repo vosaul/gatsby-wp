@@ -1,5 +1,5 @@
 import React from "react"
-import { graphql } from "gatsby"
+import { useStaticQuery, graphql } from "gatsby"
 import { GatsbyImage } from "gatsby-plugin-image"
 import parse from "html-react-parser"
 
@@ -10,12 +10,12 @@ import parse from "html-react-parser"
 // @todo update this once @wordpress upgrades their postcss version
 import "../css/@wordpress/block-library/build-style/style.css"
 import "../css/@wordpress/block-library/build-style/theme.css"
+import "../css/custom.scss"
 
 import Layout from "../components/layout"
 import Seo from "../components/seo"
 
 const PageTemplate = ({ data: {page} }) => {
-  console.log("page data",page.title, page.content);
   const featuredImage = {
     fluid: page.featuredImage?.node?.localFile?.childImageSharp?.fluid,
     alt: page.featuredImage?.node?.alt || ``,
@@ -31,7 +31,7 @@ const PageTemplate = ({ data: {page} }) => {
         itemType="http://schema.org/Article"
       >
         <header>
-          <h1 itemProp="headline">{parse(page.title)}</h1>
+          <h1 itemProp="headline">{page.title}</h1>
 
           {/* if we have a featured image for this page let's display it */}
           {featuredImage?.fluid && (
@@ -54,32 +54,31 @@ const PageTemplate = ({ data: {page} }) => {
     </Layout>
   )
 }
-
-export default PageTemplate
-
-export const pageQuery = graphql`
-  query PageById(
-    # these variables are passed in via createPage.pageContext in gatsby-node.js
-    $id: String
-  ) {
-    # selecting the current page by id
-    page: wpPage(id: { eq: $id }) {
-      id
-      content
-      title
-      link
-      featuredImage {
-        node {
-          altText
-          localFile {
-            childImageSharp {
-              fluid(maxWidth: 1000, quality: 100) {
-                ...GatsbyImageSharpFluid_tracedSVG
-              }
+const pageData = useStaticQuery(graphql`
+query PageById(
+  # these variables are passed in via createPage.pageContext in gatsby-node.js
+  $id: String
+) {
+  # selecting the current page by id
+  page: wpPage(id: { eq: $id }) {
+    id
+    content
+    title
+    link
+    featuredImage {
+      node {
+        altText
+        localFile {
+          childImageSharp {
+            fluid(maxWidth: 1000, quality: 100) {
+              ...GatsbyImageSharpFluid_tracedSVG
             }
           }
         }
       }
     }
   }
-`
+}
+`)
+export default PageTemplate
+

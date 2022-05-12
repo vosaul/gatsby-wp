@@ -5,9 +5,9 @@ module.exports = {
       options: {
         url:
           process.env.WPGRAPHQL_URL ||
-          //`http://test.360deg.pro/graphql`,
+          `http://lena.360deg.pro/graphql`,
           //`https://wpgatsbydemo.wpengine.com/graphql`,
-          `http://localhost:10003/graphql`,
+          //`http://127.0.0.1/graphql`,
       },
     },
     {
@@ -17,6 +17,7 @@ module.exports = {
         path: `${__dirname}/content/assets`,
       },
     },
+    `gatsby-plugin-sass`,
     `gatsby-plugin-styled-components`,
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
