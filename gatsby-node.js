@@ -40,11 +40,47 @@ const createIndividualBlogPostPages = async ({ posts, gatsbyUtilities }) =>
     )
   )
 
-const createRootPages = async ({ pages, gatsbyUtilities }) =>
+  exports.createPages = async ({ graphql, actions }) => {
+    const { createPage } = actions
+    const queryResults = await graphql(`
+    query pagesQuery {
+      allWpPage {
+        nodes {
+          id
+          slug
+          title
+          uri
+          content
+        }
+      }
+    }
+`)
+if (queryResults.errors) {
+  reporter.panicOnBuild(`Error while running GraphQL query.`)
+  return
+}
+
+    const template = path.resolve(`./src/templates/page.js`)
+    queryResults.data.allWpPage.nodes.forEach(node => {
+      const pagePath = '/' + (node.uri === '/' ? '' : node.slug)
+      console.log('path:',pagePath, node.id)
+      createPage({
+        path: pagePath,
+        component: template,
+        context: {
+          id: node.id,
+          title: node.title,
+          content: node.content,
+        },
+      })
+    })
+  }
+  
+
+/* const createRootPages = async ({ pages, gatsbyUtilities }) =>
   Promise.all(
     pages.map(({ page }) => {
-      console.log(page.title)
-      gatsbyUtilities.actions.createPage({
+       gatsbyUtilities.actions.createPage({
         path: page.uri,
         component: path.resolve(`./src/templates/page.js`),
         context: {
@@ -52,7 +88,7 @@ const createRootPages = async ({ pages, gatsbyUtilities }) =>
         },
       })}
     )
-  )
+  ) */
 
 async function createBlogPostArchive({ posts, gatsbyUtilities }) {
   const graphqlResult = await gatsbyUtilities.graphql(/* GraphQL */ `
@@ -80,7 +116,7 @@ async function createBlogPostArchive({ posts, gatsbyUtilities }) {
           // we want the first page to be "/" and any additional pages
           // to be numbered.
           // "/blog/2" for example
-          return page === 1 ? `/` : `/blog/${page}`
+          return page === 1 ? "/" : "/blog/${page}"
         }
 
         return null

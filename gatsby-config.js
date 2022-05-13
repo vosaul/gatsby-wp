@@ -1,4 +1,7 @@
 module.exports = {
+  siteMetadata: {
+    title: 'LET’S BE HAPPY!'
+  },
   plugins: [
     {
       resolve: `gatsby-source-wordpress`,

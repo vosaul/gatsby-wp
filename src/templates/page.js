@@ -1,5 +1,5 @@
 import React from "react"
-import { useStaticQuery, graphql } from "gatsby"
+import { graphql } from "gatsby"
 import { GatsbyImage } from "gatsby-plugin-image"
 import parse from "html-react-parser"
 
@@ -15,36 +15,26 @@ import "../css/custom.scss"
 import Layout from "../components/layout"
 import Seo from "../components/seo"
 
-const PageTemplate = ({ data: {page} }) => {
+const PageTemplate = ({ pageContext, data }) => {
   const featuredImage = {
-    fluid: page.featuredImage?.node?.localFile?.childImageSharp?.fluid,
-    alt: page.featuredImage?.node?.alt || ``,
+    fluid: data.featuredImage?.node?.localFile?.childImageSharp?.fluid,
+    alt: data.featuredImage?.node?.alt || ``,
   }
 
   return (
     <Layout>
-      <Seo title={page.title} />
+      <Seo title={pageContext.title} />
 
       <article
         className="blog-post"
         itemScope
         itemType="http://schema.org/Article"
       >
-        <header>
-          <h1 itemProp="headline">{page.title}</h1>
+          <h1 itemProp="headline">{pageContext.title}</h1>
+          <h2>{data.title}</h2>
 
-          {/* if we have a featured image for this page let's display it */}
-          {featuredImage?.fluid && (
-            <GatsbyImage
-              fluid={featuredImage.fluid}
-              alt={featuredImage.alt}
-              style={{ marginBottom: 50 }}
-            />
-          )}
-        </header>
-
-        {!!page.content && (
-          <section itemProp="articleBody">{parse(page.content)}</section>
+        {!!pageContext.content && (
+          <section itemProp="articleBody">{parse(pageContext.content)}</section>
         )}
 
         <hr />
@@ -54,31 +44,32 @@ const PageTemplate = ({ data: {page} }) => {
     </Layout>
   )
 }
-const pageData = useStaticQuery(graphql`
-query PageById(
-  # these variables are passed in via createPage.pageContext in gatsby-node.js
-  $id: String
-) {
-  # selecting the current page by id
-  page: wpPage(id: { eq: $id }) {
-    id
-    content
-    title
-    link
-    featuredImage {
-      node {
-        altText
-        localFile {
-          childImageSharp {
-            fluid(maxWidth: 1000, quality: 100) {
-              ...GatsbyImageSharpFluid_tracedSVG
+
+export default PageTemplate
+
+export const pageQuery = graphql`
+  query PageById(
+    # these variables are passed in via createPage.pageContext in gatsby-node.js
+    $id: String
+  ) {
+    # selecting the current page by id
+    page: wpPage(id: { eq: $id }) {
+      id
+      content
+      title
+      link
+      featuredImage {
+        node {
+          altText
+          localFile {
+            childImageSharp {
+              fluid(maxWidth: 1000, quality: 100) {
+                ...GatsbyImageSharpFluid_tracedSVG
+              }
             }
           }
         }
       }
     }
   }
-}
-`)
-export default PageTemplate
-
+`
